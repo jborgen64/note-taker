@@ -1,0 +1,5 @@
+const noteArray = [
+    {
+        "title":"Test Title","text":"Test text"
+    }
+];
