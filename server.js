@@ -44,17 +44,37 @@ app.get('/api/notes', (req, res) => {
 app.post('/api/notes', (req, res) => {
    fs.readFile('db/db.json', 'utf8', (err,data) => {
        if (err) throw err;
-    let json = JSON.parse(data)
+    let jasonArray = JSON.parse(data)
     let note = {
         title: req.body.title,
         text: req.body.text,
-        id: json.length + 1
+        id: jasonArray.length + 1
     };
-    json.push(note);
+    jasonArray.push(note);
 
-    fs.writeFile('db/db.json', JSON.stringify(json, null, 2), (err) => {
+    fs.writeFile('db/db.json', JSON.stringify(jasonArray, null, 2), (err) => {
         if (err) throw err;
       });
+    });
+});
+
+//DELETE
+app.delete('/api/notes:id', (req, res) => {
+    
+    fs.readFile('db/db.json', 'utf8', (err, data) => {
+        if (err) throw err;
+        let noteDel = req.param.id;
+        let jasonArray = JSON.parse(data);
+        
+        for (var i = 0; i < jasonArray.length; i++) {
+            if (jasonArray[i] === noteDel) {
+                jasonArray.splice(jasonArray[i], 1);
+            };
+        };
+
+        fs.writeFile('db/db.json', JSON.stringify(jasonArray, null, 2), (err) => {
+            if (err) throw err;
+          });
     });
 });
 
