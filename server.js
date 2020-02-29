@@ -1,15 +1,16 @@
 // Dependencies
 const express = require('express');
 const path = require('path');
-
+const fs = require('fs');
+const bodyParser = require('body-parser')
 const app = express();
 
 //Set port 
 const PORT = process.env.PORT || 3000;
 
 //Data parse
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 //Router
 // Routes
@@ -17,44 +18,38 @@ app.use(express.json());
 
 // Basic route that sends the user first to the AJAX Page
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.get('/index.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+app.get('/index', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.get('/notes.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'notes.html'));
+app.get('/notes', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'notes.html'));
 });
 
+//allows bringing in CSS & JS files to html
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/api/tables', (req, res) => {
-  return res.json(tables);
+//===============================================================
+
+app.get('/api/notes', (req, res) => {
+    fs.readFile('db/db.json', 'utf8', (err, data) => {
+        if (err) throw err;
+    console.log(data);
+   return res.json(data);
+});
 });
 
-app.get('/api/waitlist', (req, res) => {
-  return res.json(waitlist);
+app.post('/api/notes', (req, res) => {
+   const data = JSON.stringify(req.body)
+   fs.appendFile('db/db.json', data, 'utf8', (err) => {
+       if (err) throw err;
+   })
+    return res.json(data);
 });
 
-app.post('/api/clear', (req, res) => {
-  tables.empty();
-  return res.json(clear);
-});
-
-app.post('/api/tables', (req, res) => {
-  const data = req.body;
-  
-  if (tables.length < 6) {
-    tables.push(data);
-  }   else {
-    waitlist.push(data);
-  }
-
-  return res.json(data);
-});
-
-//Listen on PORT
 
 app.listen(PORT, function() {
     console.log("App listening on PORT: " + PORT);
