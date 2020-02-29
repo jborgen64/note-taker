@@ -64,18 +64,22 @@ app.delete('/api/notes/:id', (req, res) => {
     
     fs.readFile('db/db.json', 'utf8', (err, data) => {
         if (err) throw err;
-        let noteDel = req.param.id;
+        let noteDel = Number(req.params.id);
         let jasonArray = JSON.parse(data);
         
         for (var i = 0; i < jasonArray.length; i++) {
-            if (jasonArray[i] === noteDel) {
+            console.log("LOOKING FOR", noteDel, "IN OBJECT", jasonArray[i])
+            if (jasonArray[i].id === noteDel) {
+                console.log('FOUND IT')
                 jasonArray.splice(jasonArray[i], 1);
+                console.log(noteDel);
             };
         };
         fs.writeFile('db/db.json', JSON.stringify(jasonArray, null, 2), (err) => {
             if (err) throw err;
           });
           res.send(jasonArray);
+          console.log('sent');
     });
 });
 
