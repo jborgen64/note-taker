@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const bodyParser = require('body-parser')
+
 const app = express();
 
 //Set port 
@@ -21,10 +22,6 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.get('/index', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
 app.get('/notes', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'notes.html'));
 });
@@ -34,20 +31,31 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //===============================================================
 
+//GET
 app.get('/api/notes', (req, res) => {
     fs.readFile('db/db.json', 'utf8', (err, data) => {
         if (err) throw err;
-    console.log(data);
-   return res.json(data);
+    var getNotes = JSON.parse(data);
+    res.send(getNotes);
 });
 });
 
+//POST
 app.post('/api/notes', (req, res) => {
-   const data = JSON.stringify(req.body)
-   fs.appendFile('db/db.json', data, 'utf8', (err) => {
+   fs.readFile('db/db.json', 'utf8', (err,data) => {
        if (err) throw err;
-   })
-    return res.json(data);
+    let json = JSON.parse(data)
+    let note = {
+        title: req.body.title,
+        text: req.body.text,
+        id: json.length + 1
+    };
+    json.push(note);
+
+    fs.writeFile('db/db.json', JSON.stringify(json, null, 2), (err) => {
+        if (err) throw err;
+      });
+    });
 });
 
 

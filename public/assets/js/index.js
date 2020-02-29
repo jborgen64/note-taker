@@ -7,12 +7,10 @@ var $noteList = $(".list-container .list-group");
 // activeNote is used to keep track of the note in the textarea
 var activeNote = {};
 
-var currentURL = window.location.origin;
-
 // A function for getting all notes from the db
 var getNotes = function() {
   return $.ajax({
-    url: currentURL + "/api/notes",
+    url: "/api/notes",
     method: "GET"
   });
 };
@@ -20,7 +18,7 @@ var getNotes = function() {
 // A function for saving a note to the db
 var saveNote = function(note) {
   return $.ajax({
-    url: currentURL + "/api/notes",
+    url: "/api/notes",
     data: note,
     method: "POST"
   });
@@ -29,7 +27,7 @@ var saveNote = function(note) {
 // A function for deleting a note from the db
 var deleteNote = function(id) {
   return $.ajax({
-    url: currentURL + "api/notes/" + id,
+    url: "api/notes/" + id,
     method: "DELETE"
   });
 };
@@ -114,7 +112,7 @@ var renderNoteList = function(notes) {
   for (var i = 0; i < notes.length; i++) {
     var note = notes[i];
 
-    var $li = $("<li class='list-group-item'>");
+    var $li = $("<li class='list-group-item'>").data(note);
     var $span = $("<span>").text(note.title);
     var $delBtn = $(
       "<i class='fas fa-trash-alt float-right text-danger delete-note'>"
