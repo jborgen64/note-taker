@@ -42,7 +42,7 @@ app.get('/api/notes', (req, res) => {
 
 //POST
 app.post('/api/notes', (req, res) => {
-   fs.readFile('db/db.json', 'utf8', (err,data) => {
+   fs.readFile('db/db.json', 'utf8', (err, data) => {
        if (err) throw err;
     let jasonArray = JSON.parse(data)
     let note = {
@@ -55,11 +55,12 @@ app.post('/api/notes', (req, res) => {
     fs.writeFile('db/db.json', JSON.stringify(jasonArray, null, 2), (err) => {
         if (err) throw err;
       });
+      res.send(jasonArray);
     });
 });
 
 //DELETE
-app.delete('/api/notes:id', (req, res) => {
+app.delete('/api/notes/:id', (req, res) => {
     
     fs.readFile('db/db.json', 'utf8', (err, data) => {
         if (err) throw err;
@@ -71,10 +72,10 @@ app.delete('/api/notes:id', (req, res) => {
                 jasonArray.splice(jasonArray[i], 1);
             };
         };
-
         fs.writeFile('db/db.json', JSON.stringify(jasonArray, null, 2), (err) => {
             if (err) throw err;
           });
+          res.send(jasonArray);
     });
 });
 
